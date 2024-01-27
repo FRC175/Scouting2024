@@ -1,8 +1,10 @@
 package com.example.crenscendoscoutingapplication;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,11 +18,15 @@ public class MainActivity extends AppCompatActivity {
 
     int autoAmpScore = 0;
 
+    ScoutData data = null;
+
+
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         TextView autoScoreSpeaker = (TextView) findViewById(R.id.autoScoreSpeaker);
         TextView autoScoreAmp = (TextView) findViewById(R.id.autoScoreAmp);
@@ -31,8 +37,21 @@ public class MainActivity extends AppCompatActivity {
         Button notesScoredAmpDownAuto = (Button) findViewById(R.id.notesScoredAmpDownAuto);
         CheckBox leftStartAuto = (CheckBox) findViewById(R.id.leftStartAuto);
         EditText matchNumber = (EditText) findViewById(R.id.matchNumber);
-        EditText teamNumber = (EditText) findViewById(R.id.teamNumber);
+        EditText teamNumber = (EditText) findViewById(R.id.yourName);
 
+        Intent intent = getIntent();
+        ScoutData data = new ScoutData();
+        if (intent.hasExtra("ScoutData")) {
+            data = intent.getSerializableExtra("ScoutData", ScoutData.class);
+        }
+
+        if (data == null) data = new ScoutData();
+
+        autoScoreSpeaker.setText(String.valueOf(data.autoSpeakerScore));
+        autoScoreAmp.setText(String.valueOf(data.autoAmpScore));
+        leftStartAuto.setActivated(data.leftZone);
+        matchNumber.setText(data.matchNumber);
+        teamNumber.setText(data.teamNumber);
 
         notesScoredSpeakerUpAuto.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                Intent teleopIntent = new Intent(MainActivity.this, realTeleop_activity.class);
-
+               teleopIntent.putExtra("ScoutData", new ScoutData());
                startActivity(teleopIntent);
             }
         });
