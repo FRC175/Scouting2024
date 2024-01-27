@@ -15,14 +15,9 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     int autoSpeakerScore = 0;
-
     int autoAmpScore = 0;
-
     ScoutData data = null;
 
-
-
-    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +35,11 @@ public class MainActivity extends AppCompatActivity {
         EditText teamNumber = (EditText) findViewById(R.id.yourName);
 
         Intent intent = getIntent();
-        ScoutData data = new ScoutData();
+        data = new ScoutData();
         if (intent.hasExtra("ScoutData")) {
-            data = intent.getSerializableExtra("ScoutData", ScoutData.class);
+            String[] arrayData = intent.getStringArrayExtra("ScoutData");
+            data = ScoutData.fromArray(arrayData);
         }
-
-        if (data == null) data = new ScoutData();
 
         autoScoreSpeaker.setText(String.valueOf(data.autoSpeakerScore));
         autoScoreAmp.setText(String.valueOf(data.autoAmpScore));
@@ -89,7 +83,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                Intent teleopIntent = new Intent(MainActivity.this, realTeleop_activity.class);
-               teleopIntent.putExtra("ScoutData", new ScoutData());
+               String[] dataArray = data.toArray();
+               teleopIntent.putExtra("ScoutData", dataArray);
                startActivity(teleopIntent);
             }
         });

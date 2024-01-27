@@ -77,7 +77,8 @@ public class realTeleop_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
-                autoIntent.putExtra("ScoutData", new ScoutData());
+                String[] test = new String[] {"123"};
+                autoIntent.putExtra("ScoutData", test);
                 startActivity(autoIntent);
             }
         });
