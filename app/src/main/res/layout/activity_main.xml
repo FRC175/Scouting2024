@@ -147,9 +147,11 @@
         app:layout_constraintVertical_bias="0.877" />
 
     <EditText
-        android:id="@+id/yourName"
+        android:id="@+id/teamNumber"
         android:layout_width="233dp"
         android:layout_height="48dp"
+        android:allowUndo="true"
+        android:autoText="true"
         android:ems="10"
         android:hint="Team Number?"
         android:inputType="number"
@@ -158,21 +160,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.18" />
-
-    <EditText
-        android:id="@+id/yourName"
-        android:layout_width="233dp"
-        android:layout_height="48dp"
-        android:ems="10"
-        android:hint="Your Name?"
-        android:inputType="number"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.092" />
+        app:layout_constraintVertical_bias="0.191" />
 
     <EditText
         android:id="@+id/matchNumber"
@@ -186,6 +174,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.287" />
+        app:layout_constraintVertical_bias="0.285" />
+
+    <EditText
+        android:id="@+id/yourName"
+        android:layout_width="233dp"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="Your Name?"
+        android:inputType="textPersonName"
+        android:text="Your Name?"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.108"
+        tools:text="Your Name?" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
