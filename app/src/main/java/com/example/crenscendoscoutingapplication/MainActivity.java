@@ -1,17 +1,29 @@
 package com.example.crenscendoscoutingapplication;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+  // Line of code to define this as an integer not really sure why  private static final int REQUEST_WRITE_STORAGE = 0;
     int autoSpeakerScore = 0;
 
     int autoAmpScore = 0;
@@ -71,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                Intent teleopIntent = new Intent(MainActivity.this, realTeleop_activity.class);
 
+               String teamNumbers = teamNumber.getText().toString();
+               saveToCsv(teamNumbers, );
+
                startActivity(teleopIntent);
             }
         });
@@ -78,4 +93,43 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void saveToCsv(String teamNumbers, int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        try {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            if (!(grantResults.length > 0) || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission denied. Couldn't save data to CSV.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
+
+            }
+
+           String teamData = "team_data_.csv";
+           File dataFile = new File(Environment.getExternalStorageDirectory(), teamData);
+           FileWriter dataWriter = new FileWriter(dataFile, true);
+           dataWriter.append(teamNumbers);
+           dataWriter.append("\n");
+           dataWriter.close();
+            Toast.makeText(this, "Data saved to CSV", Toast.LENGTH_SHORT).show();
+
+        } catch (IOException e) {
+          e.printStackTrace();
+          Toast.makeText(this, "Error saving data to CSV",  Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//            saveToCsv();
+//        } else {
+//            Toast.makeText(this, "Permission denied. Couldn't save data to CSV.", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 }

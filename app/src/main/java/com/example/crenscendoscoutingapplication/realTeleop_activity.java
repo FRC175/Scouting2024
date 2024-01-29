@@ -78,6 +78,8 @@ public class realTeleop_activity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
 
+
+
                 startActivity(autoIntent);
             }
         });
