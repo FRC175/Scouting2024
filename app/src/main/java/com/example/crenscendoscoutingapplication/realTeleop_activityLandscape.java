@@ -1,8 +1,5 @@
 package com.example.crenscendoscoutingapplication;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +10,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import java.util.Objects;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class realTeleop_activity extends AppCompatActivity {
+public class realTeleop_activityLandscape extends AppCompatActivity {
 
     int teleopScoreSpeaker = 0;
 
@@ -26,7 +23,7 @@ public class realTeleop_activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_real_teleop);
+        setContentView(R.layout.activity_real_teleop_Landscape);
 
         TextView teleopSpeakerScore = findViewById(R.id.teleopSpeakerScore);
         TextView teleopAmpScore = findViewById(R.id.teleopAmpScore2);
@@ -117,7 +114,7 @@ public class realTeleop_activity extends AppCompatActivity {
         endButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
+                Intent autoIntent = new Intent(realTeleop_activityLandscape.this, MainActivity.class);
                 autoIntent.putExtra("ScoutData", data.toArray());
                 startActivity(autoIntent);
             }
