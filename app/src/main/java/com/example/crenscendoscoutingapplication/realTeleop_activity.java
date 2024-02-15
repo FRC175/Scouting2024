@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,15 +15,15 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.Objects;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class realTeleop_activity extends AppCompatActivity {
-
-    int teleopScoreSpeaker = 0;
-
-    int teleopScoreAmp = 0;
-
     ScoutData data = null;
 
     @Override
@@ -34,7 +37,8 @@ public class realTeleop_activity extends AppCompatActivity {
         Button notesScoredSpeakerDownTeleop = findViewById(R.id.notesScoredSpeakerDownTeleop);
         Button notesScoredAmpUpTeleop = findViewById(R.id.notesScoredAmpUpTeleop);
         Button notesScoredAmpDownTeleop = findViewById(R.id.notesScoredAmpDownTeleop);
-        Button endButton = findViewById(R.id.endButton);
+        Button loseButton = findViewById(R.id.loseButton);
+        Button winButton = findViewById(R.id.winButton);
         RadioGroup endStates = findViewById(R.id.endStates);
         RadioButton parkedButton = findViewById(R.id.parkedButton);
         RadioButton chainButton = findViewById(R.id.chainButton);
@@ -43,7 +47,9 @@ public class realTeleop_activity extends AppCompatActivity {
         RadioButton noneButton = findViewById(R.id.noneButton);
         CheckBox hpScore = findViewById(R.id.hpScore);
         CheckBox coopButton = findViewById(R.id.coopButton);
+        CheckBox carriedButton = findViewById(R.id.carriedButton);
         EditText comments = findViewById(R.id.comments);
+        CheckBox trapButton = findViewById(R.id.trapButton);
 
         Intent intent = getIntent();
         data = new ScoutData();
@@ -62,6 +68,8 @@ public class realTeleop_activity extends AppCompatActivity {
         harmonyButton.setActivated(data.endGameState.equals("Harmonized"));
         harmonyButton2.setActivated(data.endGameState.equals("Harmonized With 2"));
         noneButton.setActivated(data.endGameState.equals("N/A"));
+        carriedButton.setActivated(data.carried);
+        trapButton.setActivated(data.trap);
 
         notesScoredSpeakerDownTeleop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +88,7 @@ public class realTeleop_activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 int value = Integer.parseInt(teleopSpeakerScore.getText().toString());
-                if (value > 0) {
+                if (value < 99) {
                     value++;
                     data.teleopSpeakerScore = value;
                     teleopSpeakerScore.setText(String.valueOf(value));
@@ -102,11 +110,11 @@ public class realTeleop_activity extends AppCompatActivity {
             }
         });
 
-        notesScoredAmpDownTeleop.setOnClickListener(new View.OnClickListener() {
+        notesScoredAmpUpTeleop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int value = Integer.parseInt(teleopAmpScore.getText().toString());
-                if (value > 0) {
+                if (value < 99) {
                     value++;
                     data.teleopAmpScore = value;
                     teleopAmpScore.setText(String.valueOf(value));
@@ -115,16 +123,148 @@ public class realTeleop_activity extends AppCompatActivity {
             }
         });
 
-        endButton.setOnClickListener(new View.OnClickListener() {
+        loseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                data.won = false;
+
                 Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
                 autoIntent.putExtra("ScoutData", data.toArray());
+
+                saveToCsv(data);
+
+                startActivity(autoIntent);
+            }
+        });
+
+        winButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data.won = true;
+
+                Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
+                autoIntent.putExtra("ScoutData", data.toArray());
+
+                saveToCsv(data);
+
                 startActivity(autoIntent);
             }
         });
 
 
+        hpScore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data.humanScored = !data.humanScored;
+            }
+        });
 
+        coopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data.cooperationBonus = !data.cooperationBonus;
+            }
+        });
+
+        carriedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                data.carried = carriedButton.isActivated();
+                data.carried = !data.carried;
+            }
+        });
+
+
+        trapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data.trap = !data.trap;
+
+            }
+        });
+
+       parkedButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               data.endGameState = "0";
+           }
+       });
+
+       chainButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               data.endGameState = "1";
+           }
+       });
+
+       harmonyButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               data.endGameState = "2";
+           }
+       });
+
+       harmonyButton2.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               data.endGameState = "3";
+           }
+       });
+
+       noneButton.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               data.endGameState = "4";
+           }
+       });
+
+        comments.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (data.comments.length() < 51) {
+                    data.comments = charSequence.toString().toLowerCase();
+                }
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
+    }
+
+    private void saveToCsv(ScoutData scoutData) {
+        try {
+            String[] dataStrings = scoutData.toArray();
+
+            String csvFileName = "team_data_.csv";
+            File dirPath = this.getExternalFilesDir(Environment.getExternalStorageDirectory().getAbsolutePath());
+            File csvFile = new File(dirPath, csvFileName);
+            FileWriter dataWriter = new FileWriter(csvFile, true);
+
+            for (String value : scoutData.toArray()) {
+                dataWriter.append(value).append(",");
+            }
+
+            dataWriter.append("\n");
+            dataWriter.flush();
+            dataWriter.close();
+
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
+            String line = null;
+            while((line = reader.readLine()) != null) {
+                line = line;
+            }
+        }
+
+
+            Toast.makeText(this, "Data saved to CSV at " + dirPath.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving data to CSV",  Toast.LENGTH_SHORT).show();
+        }
     }
 }

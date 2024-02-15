@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -12,13 +11,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        int maxLength = 3;
 
         TextView autoScoreSpeaker = findViewById(R.id.autoScoreSpeaker);
         TextView autoScoreAmp = findViewById(R.id.autoScoreAmp);
@@ -40,13 +34,16 @@ public class MainActivity extends AppCompatActivity {
         EditText matchNumber = findViewById(R.id.matchNumber);
         EditText teamNumber = findViewById(R.id.teamNumber);
         EditText yourName = findViewById(R.id.yourName);
+        Button qrButton = findViewById(R.id.qrButton);
 
         Intent intent = getIntent();
         data = new ScoutData();
-        if (intent.hasExtra("ScoutData")) {
-            String[] arrayData = intent.getStringArrayExtra("ScoutData");
-            data = ScoutData.fromArray(arrayData);
-        }
+//        if (intent.hasExtra("ScoutData")) {
+//            String[] arrayData = intent.getStringArrayExtra("ScoutData");
+//            data = ScoutData.fromArray(arrayData);
+//        }
+
+
 
         autoScoreSpeaker.setText(String.valueOf(data.autoSpeakerScore));
         autoScoreAmp.setText(String.valueOf(data.autoAmpScore));
@@ -84,7 +81,12 @@ public class MainActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                data.yourName = charSequence.toString();
+                if (data.yourName.length() < 3) {
+                    data.yourName = charSequence.toString().toLowerCase();
+
+//                } else {
+//                    yourName.setText(charSequence.charAt(0) + charSequence.charAt(1) + charSequence.charAt(2));
+                }
             }
             @Override
             public void afterTextChanged(Editable editable) {}
@@ -152,6 +154,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        leftStartAuto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                data.leftZone = !data.leftZone;
+            }
+        });
+
+        qrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent qrIntent =  new Intent(MainActivity.this, qr_activity.class);
+
+                startActivity(qrIntent);
+            }
+        });
+
         teleopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -159,47 +177,20 @@ public class MainActivity extends AppCompatActivity {
                String[] dataArray = data.toArray();
                teleopIntent.putExtra("ScoutData", dataArray);
 
-               String teamNumbers = teamNumber.getText().toString();
-               saveToCsv(teamNumbers);
-
                startActivity(teleopIntent);
             }
         });
-    }
 
-    private void saveToCsv(String teamNumbers) {
-        try {
-//            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//            if (!(grantResults.length > 0) || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "Permission denied. Couldn't save data to CSV.", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//
-//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-//                != PackageManager.PERMISSION_GRANTED) {
-//                ActivityCompat.requestPermissions(this,
-//                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_STORAGE);
-//            }
-
-            String csvFileName = "team_data_.csv";
-            File dirPath = this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-            File csvFile = new File(dirPath, csvFileName);
-            FileWriter dataWriter = new FileWriter(csvFile);
-            dataWriter.append(teamNumbers);
-            dataWriter.append("\n");
-            dataWriter.flush();
-            dataWriter.close();
-//            try (BufferedReader reader = new BufferedReader(new FileReader(dataFile))) {
+//        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
 //                String line = null;
 //                while((line = reader.readLine()) != null) {
 //                    line = line;
 //                }
 //            }
 
-            Toast.makeText(this, "Data saved to CSV at " + dirPath.getAbsolutePath(), Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-          e.printStackTrace();
-          Toast.makeText(this, "Error saving data to CSV",  Toast.LENGTH_SHORT).show();
-        }
+
+
+
+
     }
 }
