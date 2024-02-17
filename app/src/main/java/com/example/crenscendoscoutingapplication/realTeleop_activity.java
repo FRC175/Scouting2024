@@ -239,8 +239,18 @@ public class realTeleop_activity extends AppCompatActivity {
         try {
             String[] dataStrings = scoutData.toArray();
 
-            String csvFileName = "team_data_.csv";
+
+
+            String csvFileName = "team_data_";
             File dirPath = this.getExternalFilesDir(Environment.getExternalStorageDirectory().getAbsolutePath());
+            String currentQRGroup = "";
+            File qrGroupFile = new File(dirPath, "qr_group.txt");
+            try (BufferedReader reader = new BufferedReader(new FileReader(qrGroupFile))) {
+                currentQRGroup = reader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            csvFileName += currentQRGroup + ".csv";
             File csvFile = new File(dirPath, csvFileName);
             FileWriter dataWriter = new FileWriter(csvFile, true);
 
@@ -251,15 +261,6 @@ public class realTeleop_activity extends AppCompatActivity {
             dataWriter.append("\n");
             dataWriter.flush();
             dataWriter.close();
-
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
-            String line = null;
-            while((line = reader.readLine()) != null) {
-                line = line;
-            }
-        }
-
 
             Toast.makeText(this, "Data saved to CSV at " + dirPath.getAbsolutePath(), Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
