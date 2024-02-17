@@ -40,13 +40,7 @@ public class qr_activity extends AppCompatActivity {
     String csvRootFileName = "team_data_";
 
     protected String getMatchDataHeader() {
-        StringBuilder sb = new StringBuilder();
-        return sb.append( "{\"t\":")
-                .append(tabletID)
-                .append(",\"i\":")
-                .append(currentQrGroup)
-                .append(",\"d\":[")
-                .toString();
+        return "{\"d\":[";
     }
 
     protected String convCSVtoJSONS(String s) {
@@ -79,9 +73,14 @@ public class qr_activity extends AppCompatActivity {
         basis += ",\"f\":";
         basis += components[12];
         basis += ",\"com\":\"";
-        basis += components[13];
-        basis += "\",\"w\":";
-        basis += components[14];
+        if (components.length > 13) {
+            basis += components[13];
+        } else {
+            basis += "";
+        }
+        basis += "\"";
+//        basis += "\",\"w\":";
+//        basis += components[14];
         basis += "}";
 
         return basis;

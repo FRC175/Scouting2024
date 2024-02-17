@@ -11,7 +11,7 @@ public class ScoutData {
     int autoAmpScore = 0;
     int autoSpeakerScore = 0;
     boolean leftZone = false;
-    String endGameState = "N/A";
+    String endGameState = "4";
 
     //teleop vars
     int teleopSpeakerScore = 0;
@@ -21,7 +21,6 @@ public class ScoutData {
     boolean cooperationBonus = false;
     boolean carried = false;
     boolean trap = false;
-    boolean won = false;
 
     String comments = "";
 
@@ -39,8 +38,7 @@ public class ScoutData {
         COMMENTS(13),
         ENDGAME_STATE(8),
         CARRIED(12),
-        TRAP(9),
-        WON(14);
+        TRAP(9);
 
         ArrayIndex(int value) {
             this._value = value;
@@ -70,7 +68,6 @@ public class ScoutData {
             data.endGameState = array[ArrayIndex.ENDGAME_STATE._value];
             data.carried = Boolean.parseBoolean(array[ArrayIndex.CARRIED._value]);
             data.trap = Boolean.parseBoolean(array[ArrayIndex.TRAP._value]);
-            data.won = Boolean.parseBoolean(array[ArrayIndex.WON._value]);
         }
 
         return data;
@@ -118,12 +115,6 @@ public class ScoutData {
 
         output[ArrayIndex.COMMENTS._value] = comments;
         output[ArrayIndex.ENDGAME_STATE._value] = endGameState;
-
-        if (won) {
-            output[ArrayIndex.WON._value] = "1";
-        } else {
-            output[ArrayIndex.WON._value] = "0";
-        }
 
         return output;
     }

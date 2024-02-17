@@ -37,7 +37,7 @@ public class realTeleop_activity extends AppCompatActivity {
         Button notesScoredSpeakerDownTeleop = findViewById(R.id.notesScoredSpeakerDownTeleop);
         Button notesScoredAmpUpTeleop = findViewById(R.id.notesScoredAmpUpTeleop);
         Button notesScoredAmpDownTeleop = findViewById(R.id.notesScoredAmpDownTeleop);
-        Button loseButton = findViewById(R.id.loseButton);
+//        Button loseButton = findViewById(R.id.loseButton);
         Button winButton = findViewById(R.id.winButton);
         RadioGroup endStates = findViewById(R.id.endStates);
         RadioButton parkedButton = findViewById(R.id.parkedButton);
@@ -123,25 +123,24 @@ public class realTeleop_activity extends AppCompatActivity {
             }
         });
 
-        loseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                data.won = false;
-
-                Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
-                autoIntent.putExtra("ScoutData", data.toArray());
-
-                saveToCsv(data);
-
-                startActivity(autoIntent);
-            }
-        });
+//        loseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                data.won = false;
+//
+//                Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
+//                autoIntent.putExtra("ScoutData", data.toArray());
+//
+//                saveToCsv(data);
+//
+//                startActivity(autoIntent);
+//            }
+//        });
 
         winButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                data.won = true;
 
                 Intent autoIntent = new Intent(realTeleop_activity.this, MainActivity.class);
                 autoIntent.putExtra("ScoutData", data.toArray());
